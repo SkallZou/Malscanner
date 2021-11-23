@@ -39,5 +39,13 @@ elif choice == "2":
           "                CHECK URL              \n" +
           "---------------------------------------")
 
+    url_user = input("Please enter the URL to check: ")
+    url_id = vt.url_id(url_user)
+    url = client.get_object("/urls/{}", format(url_id))
+    print("Suspicious: " + str(url.get("suspicious")) +
+          "\nMalicious: " + str(url.get("malicious")) +
+          "\nFail: " + str(url.get("failure")) +          
+          "\nUndetected : " + str(url.get("undetected")))
+
 client.close()
                                 
