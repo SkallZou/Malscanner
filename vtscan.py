@@ -1,10 +1,16 @@
-#requirement : pip3 install vt, hashlib
+#requirement : pip3 install vt, hashlib, OTXv2
 import vt
+import OTXv2
 import hashlib
 import readline
+import configparser
 
-#Enter your VirusTotal API key
-client = vt.Client("")
+
+config = configparser.ConfigParser()
+config.read('config.cfg')
+VT_API = config.get('CONFIG', 'VT_API') #Enter your VirusTotal API key in the config file
+client = vt.Client(VT_API)
+
 
 print("------------------------------------------------\n")
 print("                   VT Scan                      \n")
