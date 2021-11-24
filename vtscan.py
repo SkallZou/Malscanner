@@ -47,5 +47,14 @@ elif choice == "2":
           "\nFail: " + str(url.get("failure")) +          
           "\nUndetected : " + str(url.get("undetected")))
 
+elif choice == "3":
+    print("---------------------------------------\n" +
+          "                CHECK IP               \n" +
+          "---------------------------------------")
+    user_ip = input("Please enter the IP address to check: ")
+    ip_to_analyze = client.get_object("/ip_addresses/{}", format(user_ip))
+    print(ip_to_analyze.last_analysis_stats)
+
+
 client.close()
                                 
