@@ -1,16 +1,22 @@
 #requirement : pip3 install vt, hashlib, OTXv2
 import vt
-import OTXv2
+from OTXv2 import OTXv2
 import hashlib
+import get_malicious
 import readline
 import configparser
 
 
 config = configparser.ConfigParser()
 config.read('config.cfg')
+
+#ConfigVT
 VT_API = config.get('CONFIG', 'VT_API') #Enter your VirusTotal API key in the config file
 client = vt.Client(VT_API)
-
+#Config OTX
+OTX_API = config.get('CONFIG', 'OTX_API') #Enter your Alienvault API key in the config file
+OTX_SERVER = config.get('CONFIG', 'OTX_SERVER')
+otx = OTXv2(OTX_API, server=OTX_SERVER)
 
 print("------------------------------------------------\n")
 print("                   VT Scan                      \n")
@@ -58,8 +64,12 @@ elif choice == "3":
           "                CHECK IP               \n" +
           "---------------------------------------")
     user_ip = input("Please enter the IP address to check: ")
+    print("VirusTotal Analysis: ")
     ip_to_analyze = client.get_object("/ip_addresses/{}", format(user_ip))
     print(ip_to_analyze.last_analysis_stats)
+
+    print("Alienvault Analysis: ")
+    alerts = get_malicious.ip(otx, user_ip)
 
 
 client.close()
