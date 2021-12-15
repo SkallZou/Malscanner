@@ -43,19 +43,30 @@ if choice == "1":
     readline.set_completer_delims(' \t\n=')
     readline.parse_and_bind("tab: complete")
     file_path = input("Please indicate the file path: ")
+    print("VirusTotal Analysis:")
     file_md5 = hashlib.md5(open(file_path, 'rb').read()).hexdigest()
     file_to_analyze = client.get_object("/files/{}", format(file_md5))
     file_analyzed = file_to_analyze.last_analysis_stats
     print("Suspicious: " + str(file_analyzed.get("suspicious")) +
           "\nMalicious: " + str(file_analyzed.get("malicious")) +
           "\nHarmless: " + str(file_analyzed.get("harmless")) +   
-          "\nUndetected : " + str(file_analyzed.get("undetected")))
+          "\nUndetected : " + str(file_analyzed.get("undetected")))  
     
+    print("--------------------------------------")
+
+    print("Alienvault Analysis: ")
+    alerts = get_malicious.file(otx, file_md5)
+    if len(alerts) == 0:
+        print("Unknown or not identified as malicious in Alienvault")
+    else:
+        print(alerts)
+
 elif choice == "2":
     print("---------------------------------------\n" +
           "                CHECK URL              \n" +
           "---------------------------------------")
     url_user = input("Please enter the URL to check: ")
+    print("VirusTotal Analysis: ")
     url_id = vt.url_id(url_user)
     url = client.get_object("/urls/{}", format(url_id))
     url_analyzed = url.last_analysis_stats
@@ -64,6 +75,15 @@ elif choice == "2":
           "\nHarmless: " + str(url_analyzed.get("harmless")) +   
           "\nUndetected : " + str(url_analyzed.get("undetected")))
 
+    print("--------------------------------------")
+    
+    print("Alienvault Analysis: ")
+    alerts = get_malicious.url(otx, url_user)
+    if len(alerts) == 0:
+        print("Unknown or not identified as malicious in Alienvault")
+    else:
+        print(str(alerts))
+
 elif choice == "3":
     print("---------------------------------------\n" +
           "                CHECK IP               \n" +
@@ -71,11 +91,20 @@ elif choice == "3":
     user_ip = input("Please enter the IP address to check: ")
     print("VirusTotal Analysis: ")
     ip_to_analyze = client.get_object("/ip_addresses/{}", format(user_ip))
-    print(ip_to_analyze.last_analysis_stats)
+    ip_analyzed = ip_to_analyze.last_analysis_stats
+    print("Suspicious: " + str(ip_analyzed.get("suspicious")) + 
+          "\nMalicious: " + str(ip_analyzed.get("malicious")) +
+          "\nHarmless: " + str(ip_analyzed.get("harmless")) +
+          "\nUndetected: " + str(ip_analyzed.get("undetected")))
+
+    print("---------------------------------------")
 
     print("Alienvault Analysis: ")
     alerts = get_malicious.ip(otx, user_ip)
-    print(alerts)
+    if len(alerts) == 0:
+        print("Unknown or not identified in Alienvault")
+    else:
+        print(alerts)
 
 else:
     print("Option not available, exiting...")
